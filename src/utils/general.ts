@@ -1,4 +1,4 @@
-import {PasswordValidation} from '@src/types/auth';
+import {EmailValidation, PasswordValidation} from '@src/types/auth';
 
 export const getOTPCountdownNumber = (
   number: number,
@@ -12,6 +12,27 @@ export const getOTPCountdownNumber = (
   return str;
 };
 
+export const validateEmail = (email: string) => {
+  const res: EmailValidation = {
+    status: '',
+    error: false,
+  };
+
+  if (!email) {
+    return res;
+  }
+
+  const patternEmail = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}');
+
+  if (!patternEmail.test(email)) {
+    res.error = true;
+    res.status = 'Enter valid email';
+    return res;
+  }
+
+  return res;
+};
+
 export const validatePassword = (password: string) => {
   const res: PasswordValidation = {
     status: '',
@@ -22,23 +43,23 @@ export const validatePassword = (password: string) => {
     return res;
   }
 
-  const pattern_lowerCase = new RegExp('(?=.*[a-z])');
-  const pattern_upperCase = new RegExp('(?=.*[A-Z])');
-  const pattern_symbol = new RegExp('(?=.[$-/:-?{-~!"^_`\\[\\]])');
+  const patternLowerCase = new RegExp('(?=.*[a-z])');
+  const patternUpperCase = new RegExp('(?=.*[A-Z])');
+  const patternSymbol = new RegExp('(?=.[$-/:-?{-~!"^_`\\[\\]])');
 
-  if (!pattern_lowerCase.test(password)) {
+  if (!patternLowerCase.test(password)) {
     res.error = true;
     res.status = 'Must contain at least 1 lowercase letter';
     return res;
   }
 
-  if (!pattern_upperCase.test(password)) {
+  if (!patternUpperCase.test(password)) {
     res.error = true;
     res.status = 'Must contain at least 1 uppercase letter';
     return res;
   }
 
-  if (!pattern_symbol.test(password)) {
+  if (!patternSymbol.test(password)) {
     res.error = true;
     res.status = 'Must contain at least a symbol';
     return res;

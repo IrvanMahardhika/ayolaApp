@@ -16,9 +16,9 @@ import Button from '@components/button/Button';
 
 import {Routes} from '@constants/Routes';
 
-import {PasswordValidation} from '@src/types/auth';
+import {EmailValidation, PasswordValidation} from '@src/types/auth';
 
-import {validatePassword} from '@utils/general';
+import {validateEmail, validatePassword} from '@utils/general';
 
 import RegisterStyles from './Register.styles';
 
@@ -87,6 +87,10 @@ type InputFields = {
 const Register: React.FC<RegisterPageProps> = ({navigation}) => {
   const styles = useThemedStyles(RegisterStyles);
 
+  const [emailValidation, setEmailValidation] = useState<EmailValidation>({
+    status: '',
+    error: false,
+  });
   const [passwordValidation, setPasswordValidation] =
     useState<PasswordValidation>({status: '', error: false});
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -109,6 +113,11 @@ const Register: React.FC<RegisterPageProps> = ({navigation}) => {
   };
 
   const goToLoginPage = () => navigation.navigate(Routes.LOGIN);
+
+  const handleValidateEmail = (inputEmail: string) => {
+    const res = validateEmail(inputEmail);
+    setEmailValidation(res);
+  };
 
   const handleValidatePassword = (inputPassword: string) => {
     const res = validatePassword(inputPassword);
@@ -149,8 +158,10 @@ const Register: React.FC<RegisterPageProps> = ({navigation}) => {
       inputMode: 'email',
       secureTextEntry: false,
       value: state.email,
-      onChangeText: (text: string) =>
-        dispatch({type: ActionType.SET_EMAIL, payload: text}),
+      onChangeText: (text: string) => {
+        dispatch({type: ActionType.SET_EMAIL, payload: text});
+        handleValidateEmail(text);
+      },
     },
     {
       label: 'Password',
@@ -167,6 +178,9 @@ const Register: React.FC<RegisterPageProps> = ({navigation}) => {
 
   const _renderInputFields = () => {
     return inputFields.map((inputField, index) => {
+      const isEmailInput = inputField.label === 'Email';
+      const isEmailInputError = isEmailInput && emailValidation.error;
+
       const isPasswordInput = inputField.label === 'Password';
       const isPasswordInputError = isPasswordInput && passwordValidation.error;
 
@@ -179,11 +193,15 @@ const Register: React.FC<RegisterPageProps> = ({navigation}) => {
             secureTextEntry={inputField.secureTextEntry}
             style={[
               styles.textInput,
-              isPasswordInputError && styles.textInputError,
+              (isPasswordInputError || isEmailInputError) &&
+                styles.textInputError,
             ]}
             value={inputField.value}
             onChangeText={inputField.onChangeText}
           />
+          {isEmailInputError && (
+            <Text style={styles.errorText}>{emailValidation.status}</Text>
+          )}
           {isPasswordInputError && (
             <Text style={styles.errorText}>{passwordValidation.status}</Text>
           )}

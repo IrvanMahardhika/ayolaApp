@@ -11,6 +11,8 @@ export default (theme: Theme) =>
     body: {
       paddingVertical: 10,
       paddingHorizontal: 24,
+      justifyContent: 'flex-end',
+      overflow: 'hidden',
     },
     inputLabelText: {
       marginBottom: 5,
@@ -21,6 +23,16 @@ export default (theme: Theme) =>
       borderWidth: 1,
       borderColor: theme.colors.grey,
       borderRadius: 4,
+    },
+    textInputError: {
+      marginBottom: 5,
+      borderColor: theme.colors.red,
+    },
+    errorText: {marginBottom: 20, color: theme.colors.red},
+    showPasswordButton: {
+      position: 'absolute',
+      right: 10,
+      top: 40,
     },
     buttonContainer: {
       alignItems: 'center',

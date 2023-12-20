@@ -1,10 +1,12 @@
-import React, {useReducer, useEffect} from 'react';
+import React, {useReducer, useEffect, useState} from 'react';
 import {
   View,
   Text,
   TextInput,
   InputModeOptions,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 
 import useThemedStyles from '@src/hooks/useThemedStyles';
@@ -13,6 +15,10 @@ import Header from '@components/header/Header';
 import Button from '@components/button/Button';
 
 import {Routes} from '@constants/Routes';
+
+import {PasswordValidation} from '@src/types/auth';
+
+import {validatePassword} from '@utils/general';
 
 import RegisterStyles from './Register.styles';
 
@@ -26,6 +32,7 @@ type RegisterPageProps = {
 };
 
 enum ActionType {
+  SET_PHONENUMBER = 'SET_PHONENUMBER',
   SET_FIRSTNAME = 'SET_FIRSTNAME',
   SET_LASTNAME = 'SET_LASTNAME',
   SET_EMAIL = 'SET_EMAIL',
@@ -34,6 +41,7 @@ enum ActionType {
 }
 
 type AuthState = {
+  phoneNumber: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -41,6 +49,7 @@ type AuthState = {
 };
 
 const INITIAL_STATE: AuthState = {
+  phoneNumber: '',
   firstName: '',
   lastName: '',
   email: '',
@@ -49,6 +58,8 @@ const INITIAL_STATE: AuthState = {
 
 const REDUCER = (state: AuthState, action: {type: string; payload: string}) => {
   switch (action.type) {
+    case ActionType.SET_PHONENUMBER:
+      return {...state, phoneNumber: action.payload};
     case ActionType.SET_FIRSTNAME:
       return {...state, firstName: action.payload};
     case ActionType.SET_LASTNAME:
@@ -76,6 +87,9 @@ type InputFields = {
 const Register: React.FC<RegisterPageProps> = ({navigation}) => {
   const styles = useThemedStyles(RegisterStyles);
 
+  const [passwordValidation, setPasswordValidation] =
+    useState<PasswordValidation>({status: '', error: false});
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [state, dispatch] = useReducer(REDUCER, INITIAL_STATE);
 
   const isSubmitButtonDisabled =
@@ -91,12 +105,26 @@ const Register: React.FC<RegisterPageProps> = ({navigation}) => {
 
   const handleSubmit = () => {
     console.log('state -- ', state);
-    navigation.navigate(Routes.OTP);
+    navigation.navigate(Routes.OTP, {phoneNumber: state.phoneNumber});
   };
 
   const goToLoginPage = () => navigation.navigate(Routes.LOGIN);
 
+  const handleValidatePassword = (inputPassword: string) => {
+    const res = validatePassword(inputPassword);
+    setPasswordValidation(res);
+  };
+
   const inputFields: Array<InputFields> = [
+    {
+      label: 'Phone number',
+      placeholder: '62812103994457',
+      inputMode: 'tel',
+      secureTextEntry: false,
+      value: state.phoneNumber,
+      onChangeText: (text: string) =>
+        dispatch({type: ActionType.SET_PHONENUMBER, payload: text}),
+    },
     {
       label: 'First name',
       placeholder: 'John',
@@ -128,15 +156,20 @@ const Register: React.FC<RegisterPageProps> = ({navigation}) => {
       label: 'Password',
       placeholder: '',
       inputMode: 'text',
-      secureTextEntry: true,
+      secureTextEntry: !showPassword,
       value: state.password,
-      onChangeText: (text: string) =>
-        dispatch({type: ActionType.SET_PASSWORD, payload: text}),
+      onChangeText: (text: string) => {
+        dispatch({type: ActionType.SET_PASSWORD, payload: text});
+        handleValidatePassword(text);
+      },
     },
   ];
 
   const _renderInputFields = () => {
     return inputFields.map((inputField, index) => {
+      const isPasswordInput = inputField.label === 'Password';
+      const isPasswordInputError = isPasswordInput && passwordValidation.error;
+
       return (
         <View key={index.toString()}>
           <Text style={styles.inputLabelText}>{inputField.label}</Text>
@@ -144,10 +177,23 @@ const Register: React.FC<RegisterPageProps> = ({navigation}) => {
             placeholder={inputField.placeholder}
             inputMode={inputField.inputMode}
             secureTextEntry={inputField.secureTextEntry}
-            style={styles.textInput}
+            style={[
+              styles.textInput,
+              isPasswordInputError && styles.textInputError,
+            ]}
             value={inputField.value}
             onChangeText={inputField.onChangeText}
           />
+          {isPasswordInputError && (
+            <Text style={styles.errorText}>{passwordValidation.status}</Text>
+          )}
+          {isPasswordInput && (
+            <TouchableOpacity
+              style={styles.showPasswordButton}
+              onPress={() => setShowPassword(!showPassword)}>
+              <Text>show</Text>
+            </TouchableOpacity>
+          )}
         </View>
       );
     });
@@ -156,22 +202,25 @@ const Register: React.FC<RegisterPageProps> = ({navigation}) => {
   return (
     <View style={styles.root}>
       <Header title="Sign Up" />
-      <View style={styles.body}>
-        {_renderInputFields()}
-        <View style={styles.buttonContainer}>
-          <Button
-            text="Submit"
-            disabled={isSubmitButtonDisabled}
-            onPress={handleSubmit}
-          />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <View style={styles.body}>
+          {_renderInputFields()}
+          <View style={styles.buttonContainer}>
+            <Button
+              text="Submit"
+              disabled={isSubmitButtonDisabled}
+              onPress={handleSubmit}
+            />
+          </View>
+          <View style={styles.goToLoginButtonContainer}>
+            <Text>Already have account ?</Text>
+            <TouchableOpacity onPress={goToLoginPage}>
+              <Text style={styles.goToLoginButtonText}>Sign In</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.goToLoginButtonContainer}>
-          <Text>Already have account ?</Text>
-          <TouchableOpacity onPress={goToLoginPage}>
-            <Text style={styles.goToLoginButtonText}>Sign In</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      </KeyboardAvoidingView>
     </View>
   );
 };

@@ -24,16 +24,21 @@ type OTPPageNavigationProps = {
 
 type OTPPageProps = {
   navigation: OTPPageNavigationProps;
+  route: {
+    params: {
+      phoneNumber: string;
+    };
+  };
 };
 
 const OTP_LENGTH = 6;
 const OTP_COUNTDOWN_START_FROM = 30;
 const ACCEPTED_OTP_VALUE = '111111';
 
-const OTP: React.FC<OTPPageProps> = ({navigation}) => {
+const OTP = ({navigation, route}: OTPPageProps) => {
   const styles = useThemedStyles(OTPStyles);
 
-  const phoneNumber = '+6281210394457';
+  const phoneNumber = route.params.phoneNumber;
 
   const [mm, ss, restartCountdown] = useCountdown(OTP_COUNTDOWN_START_FROM);
   const isCountdownFinished = mm + ss <= 0;

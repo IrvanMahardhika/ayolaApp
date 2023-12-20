@@ -14,9 +14,9 @@ import OTP from '@src/pages/otp/OTP';
 import Login from '@src/pages/login/Login';
 import Home from '@src/pages/home/Home';
 
-import {Routes} from '@constants/Routes';
+import {Routes, RootStackParamType} from '@constants/Routes';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamType>();
 
 function App(): React.JSX.Element {
   return (

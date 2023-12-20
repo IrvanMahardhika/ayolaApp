@@ -6,22 +6,34 @@ import useThemedStyles from '@src/hooks/useThemedStyles';
 import Header from '@components/header/Header';
 import Button from '@components/button/Button';
 
+import {Routes} from '@constants/Routes';
+
 import LoginStyles from './Login.styles';
 
-const Login: React.FC = () => {
+type LoginPageNavigationProps = {
+  navigate: any;
+};
+
+type LoginPageProps = {
+  navigation: LoginPageNavigationProps;
+};
+
+const Login: React.FC<LoginPageProps> = ({navigation}) => {
   const styles = useThemedStyles(LoginStyles);
 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
+  const isSubmitButtonDisabled = !email || !password;
+
   const handleSubmit = () => {
     console.log('email -- ', email);
     console.log('password -- ', password);
+
+    navigation.navigate(Routes.HOME);
   };
 
-  const goToRegisterPage = () => {
-    console.log('go to register page');
-  };
+  const goToRegisterPage = () => navigation.navigate(Routes.REGISTER);
 
   return (
     <View style={styles.root}>
@@ -43,7 +55,11 @@ const Login: React.FC = () => {
           onChangeText={(text: string) => setPassword(text)}
         />
         <View style={styles.buttonContainer}>
-          <Button text="Submit" onPress={handleSubmit} />
+          <Button
+            text="Submit"
+            disabled={isSubmitButtonDisabled}
+            onPress={handleSubmit}
+          />
         </View>
         <View style={styles.goToRegisterButtonContainer}>
           <Text>Don't have account ?</Text>

@@ -1,4 +1,5 @@
-import {useEffect, useState} from 'react';
+import {useState, useCallback} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 
 type RestartCountDownType = (countdown?: number) => void;
 type UseCountdownType = (
@@ -12,17 +13,19 @@ const useCountdown: UseCountdownType = (seconds: number) => {
     setCountDownLeft(countdown || seconds);
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCountDownLeft(cd => cd - 1);
-    }, 1000);
+  useFocusEffect(
+    useCallback(() => {
+      const interval = setInterval(() => {
+        setCountDownLeft(cd => cd - 1);
+      }, 1000);
 
-    if (countDownLeft <= 0) {
-      clearInterval(interval);
-    }
+      if (countDownLeft <= 0) {
+        clearInterval(interval);
+      }
 
-    return () => clearInterval(interval);
-  }, [countDownLeft]);
+      return () => clearInterval(interval);
+    }, [countDownLeft]),
+  );
 
   const mm = Math.floor(countDownLeft / 60);
   const ss = countDownLeft - mm * 60;

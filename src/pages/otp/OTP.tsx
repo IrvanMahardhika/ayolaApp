@@ -1,17 +1,36 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {View, Text, TouchableOpacity, TextInput, Keyboard} from 'react-native';
+import {
+  Alert,
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  Keyboard,
+} from 'react-native';
 
 import useThemedStyles from '@src/hooks/useThemedStyles';
 import useCountdown from '@src/hooks/useCountDown';
 
 import {getOTPCountdownNumber} from '@utils/general';
 
+import {Routes} from '@constants/Routes';
+
 import OTPStyles from './OTP.styles';
+
+type OTPPageNavigationProps = {
+  pop: any;
+  navigate: any;
+};
+
+type OTPPageProps = {
+  navigation: OTPPageNavigationProps;
+};
 
 const OTP_LENGTH = 6;
 const OTP_COUNTDOWN_START_FROM = 30;
+const ACCEPTED_OTP_VALUE = '111111';
 
-const OTP: React.FC = () => {
+const OTP: React.FC<OTPPageProps> = ({navigation}) => {
   const styles = useThemedStyles(OTPStyles);
 
   const phoneNumber = '+6281210394457';
@@ -29,6 +48,27 @@ const OTP: React.FC = () => {
       (inputRef?.current as any)?.focus();
     }
   }, []);
+
+  useEffect(() => {
+    const isOtpInputCompleted = otpValue.length === 6;
+    if (!isOtpInputCompleted) {
+      return;
+    }
+    if (otpValue === ACCEPTED_OTP_VALUE) {
+      Alert.alert('Success', 'OTP match, please login', [
+        {
+          text: 'OK',
+          onPress: () => {
+            setOtpValue('');
+            navigation.pop();
+            navigation.navigate(Routes.LOGIN);
+          },
+        },
+      ]);
+    } else {
+      setOtpError('error');
+    }
+  }, [navigation, otpValue]);
 
   const handleOnChangeOtp = (code: string) => {
     setOtpError('');
@@ -103,7 +143,13 @@ const OTP: React.FC = () => {
       <TouchableOpacity
         disabled={!isCountdownFinished}
         onPress={() => restartCountdown()}>
-        <Text style={styles.resendButtonText}>Resend Code</Text>
+        <Text
+          style={[
+            styles.resendButtonText,
+            isCountdownFinished && styles.resendButtonTextEnabled,
+          ]}>
+          Resend Code
+        </Text>
       </TouchableOpacity>
     </View>
   );

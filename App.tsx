@@ -6,14 +6,57 @@
  */
 
 import React from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import Register from '@src/pages/register/Register';
 import OTP from '@src/pages/otp/OTP';
 import Login from '@src/pages/login/Login';
 import Home from '@src/pages/home/Home';
 
+import {Routes} from '@constants/Routes';
+
+const Stack = createNativeStackNavigator();
+
 function App(): React.JSX.Element {
-  return <Home />;
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName={Routes.REGISTER}>
+        <Stack.Screen
+          name={Routes.REGISTER}
+          component={Register}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name={Routes.OTP}
+          component={OTP}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name={Routes.LOGIN}
+          component={Login}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name={Routes.HOME}
+          component={Home}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }
 
 export default App;

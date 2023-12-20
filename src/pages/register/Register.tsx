@@ -1,4 +1,4 @@
-import React, {useReducer} from 'react';
+import React, {useReducer, useEffect} from 'react';
 import {
   View,
   Text,
@@ -12,13 +12,25 @@ import useThemedStyles from '@src/hooks/useThemedStyles';
 import Header from '@components/header/Header';
 import Button from '@components/button/Button';
 
+import {Routes} from '@constants/Routes';
+
 import RegisterStyles from './Register.styles';
+
+type RegisterPageNavigationProps = {
+  navigate: any;
+  addListener: any;
+};
+
+type RegisterPageProps = {
+  navigation: RegisterPageNavigationProps;
+};
 
 enum ActionType {
   SET_FIRSTNAME = 'SET_FIRSTNAME',
   SET_LASTNAME = 'SET_LASTNAME',
   SET_EMAIL = 'SET_EMAIL',
   SET_PASSWORD = 'SET_PASSWORD',
+  SET_RESET = 'SET_RESET',
 }
 
 type AuthState = {
@@ -45,6 +57,8 @@ const REDUCER = (state: AuthState, action: {type: string; payload: string}) => {
       return {...state, email: action.payload};
     case ActionType.SET_PASSWORD:
       return {...state, password: action.payload};
+    case ActionType.SET_RESET:
+      return INITIAL_STATE;
     default:
       return INITIAL_STATE;
   }
@@ -59,18 +73,28 @@ type InputFields = {
   onChangeText: (text: string) => void;
 };
 
-const Register: React.FC = () => {
+const Register: React.FC<RegisterPageProps> = ({navigation}) => {
   const styles = useThemedStyles(RegisterStyles);
 
   const [state, dispatch] = useReducer(REDUCER, INITIAL_STATE);
 
+  const isSubmitButtonDisabled =
+    !state.email || !state.firstName || !state.lastName || !state.password;
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      dispatch({type: ActionType.SET_RESET, payload: ''});
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const handleSubmit = () => {
     console.log('state -- ', state);
+    navigation.navigate(Routes.OTP);
   };
 
-  const goToLoginPage = () => {
-    console.log('go to login page');
-  };
+  const goToLoginPage = () => navigation.navigate(Routes.LOGIN);
 
   const inputFields: Array<InputFields> = [
     {
@@ -135,7 +159,11 @@ const Register: React.FC = () => {
       <View style={styles.body}>
         {_renderInputFields()}
         <View style={styles.buttonContainer}>
-          <Button text="Submit" onPress={handleSubmit} />
+          <Button
+            text="Submit"
+            disabled={isSubmitButtonDisabled}
+            onPress={handleSubmit}
+          />
         </View>
         <View style={styles.goToLoginButtonContainer}>
           <Text>Already have account ?</Text>

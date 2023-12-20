@@ -12,6 +12,9 @@ export default (theme: Theme) =>
       justifyContent: 'center',
       backgroundColor: theme.colors.red,
     },
+    buttonDisabled: {
+      opacity: 0.5,
+    },
     buttonText: {
       fontSize: 18,
       fontWeight: 'bold',

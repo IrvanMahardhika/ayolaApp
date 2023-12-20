@@ -140,7 +140,7 @@ const Register: React.FC = () => {
         <View style={styles.goToLoginButtonContainer}>
           <Text>Already have account ?</Text>
           <TouchableOpacity onPress={goToLoginPage}>
-            <Text style={styles.goToLoginButtonText}>Login</Text>
+            <Text style={styles.goToLoginButtonText}>Sign In</Text>
           </TouchableOpacity>
         </View>
       </View>

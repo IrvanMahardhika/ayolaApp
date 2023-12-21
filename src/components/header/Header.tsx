@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, Platform} from 'react-native';
 
 import useThemedStyles from '@src/hooks/useThemedStyles';
 
@@ -12,8 +12,10 @@ type HeaderProps = {
 const Header: React.FC<HeaderProps> = ({title}) => {
   const styles = useThemedStyles(HeaderStyles);
 
+  const isIos = Platform.OS === 'ios';
+
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, isIos && styles.paddingTopIos]}>
       <Text testID="header-text" style={styles.headerText}>
         {title}
       </Text>

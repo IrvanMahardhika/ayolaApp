@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {Alert, View, Text, TextInput, TouchableOpacity} from 'react-native';
+import {
+  Alert,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 
 import useThemedStyles from '@src/hooks/useThemedStyles';
 
@@ -38,6 +45,8 @@ const Login: React.FC<LoginPageProps> = ({navigation}) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const isSubmitButtonDisabled = !email || !password;
+
+  const isIos = Platform.OS === 'ios';
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
@@ -106,7 +115,7 @@ const Login: React.FC<LoginPageProps> = ({navigation}) => {
         <TextInput
           placeholder="Email"
           inputMode="text"
-          style={styles.textInput}
+          style={[styles.textInput, isIos && styles.textInputPaddingIos]}
           value={email}
           onChangeText={(text: string) => setEmail(text)}
         />
@@ -115,7 +124,7 @@ const Login: React.FC<LoginPageProps> = ({navigation}) => {
             placeholder="Password"
             inputMode="text"
             secureTextEntry={!showPassword}
-            style={styles.textInput}
+            style={[styles.textInput, isIos && styles.textInputPaddingIos]}
             value={password}
             onChangeText={(text: string) => setPassword(text)}
           />

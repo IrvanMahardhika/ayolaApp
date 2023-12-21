@@ -18,6 +18,7 @@ export default (theme: Theme) =>
       color: theme.colors.black,
       textAlign: 'center',
     },
+    mainTextMarginTopIos: {marginTop: 100},
     infoText: {
       width: 300,
       textAlign: 'center',

@@ -14,11 +14,13 @@ export default (theme: Theme) =>
       paddingHorizontal: 24,
     },
     textInput: {
+      padding: 15,
       marginBottom: 20,
       borderWidth: 1,
       borderColor: theme.colors.grey,
       borderRadius: 4,
     },
+    textInputPaddingIos: {padding: 15},
     buttonContainer: {
       alignItems: 'center',
     },

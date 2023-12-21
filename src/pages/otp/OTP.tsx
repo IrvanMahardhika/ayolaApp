@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   Keyboard,
+  Platform,
 } from 'react-native';
 
 import useThemedStyles from '@src/hooks/useThemedStyles';
@@ -39,6 +40,7 @@ const OTP = ({navigation, route}: OTPPageProps) => {
   const styles = useThemedStyles(OTPStyles);
 
   const phoneNumber = route.params.phoneNumber;
+  const isIos = Platform.OS === 'ios';
 
   const [mm, ss, restartCountdown] = useCountdown(OTP_COUNTDOWN_START_FROM);
   const isCountdownFinished = mm + ss <= 0;
@@ -121,7 +123,9 @@ const OTP = ({navigation, route}: OTPPageProps) => {
 
   return (
     <View style={styles.root}>
-      <Text testID="main-text" style={styles.mainText}>
+      <Text
+        testID="main-text"
+        style={[styles.mainText, isIos && styles.mainTextMarginTopIos]}>
         Enter Authentication Code
       </Text>
       <Text

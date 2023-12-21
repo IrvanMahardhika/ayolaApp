@@ -11,8 +11,6 @@ export default (theme: Theme) =>
     body: {
       paddingVertical: 10,
       paddingHorizontal: 24,
-      justifyContent: 'flex-end',
-      overflow: 'hidden',
     },
     inputLabelText: {
       marginBottom: 5,
@@ -24,6 +22,7 @@ export default (theme: Theme) =>
       borderColor: theme.colors.grey,
       borderRadius: 4,
     },
+    textInputPaddingIos: {padding: 15},
     textInputError: {
       marginBottom: 5,
       borderColor: theme.colors.red,

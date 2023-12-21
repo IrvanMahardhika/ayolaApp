@@ -9,6 +9,7 @@ export default (theme: Theme) =>
       alignItems: 'center',
       backgroundColor: theme.colors.red,
     },
+    paddingTopIos: {paddingTop: 60},
     headerText: {
       fontSize: 24,
       fontWeight: 'bold',

@@ -2,6 +2,7 @@ import React, {useReducer, useEffect, useState} from 'react';
 import {
   View,
   Text,
+  ScrollView,
   TextInput,
   InputModeOptions,
   TouchableOpacity,
@@ -96,6 +97,8 @@ const Register: React.FC<RegisterPageProps> = ({navigation}) => {
 
   const isSubmitButtonDisabled =
     !state.email || !state.firstName || !state.lastName || !state.password;
+
+  const isIos = Platform.OS === 'ios';
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -209,6 +212,7 @@ const Register: React.FC<RegisterPageProps> = ({navigation}) => {
               styles.textInput,
               (isPasswordInputError || isEmailInputError) &&
                 styles.textInputError,
+              isIos && styles.textInputPaddingIos,
             ]}
             value={inputField.value}
             onChangeText={inputField.onChangeText}
@@ -234,9 +238,8 @@ const Register: React.FC<RegisterPageProps> = ({navigation}) => {
   return (
     <View style={styles.root}>
       <Header title="Sign Up" />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <View style={styles.body}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'}>
+        <ScrollView style={styles.body}>
           {_renderInputFields()}
           <View style={styles.buttonContainer}>
             <Button
@@ -251,7 +254,7 @@ const Register: React.FC<RegisterPageProps> = ({navigation}) => {
               <Text style={styles.goToLoginButtonText}>Sign In</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </View>
   );

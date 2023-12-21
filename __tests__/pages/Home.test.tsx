@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, screen} from '@testing-library/react-native';
+import {render} from '@testing-library/react-native';
 import {describe, it, expect, jest} from '@jest/globals';
 
 import AuthProvider from '@src/contexts/authContext';
@@ -22,9 +22,12 @@ const component = (
 
 describe('Home page', () => {
   it('Renders correctly', () => {
-    render(component);
+    const {getByTestId} = render(component);
 
-    const headerText = screen.getByTestId('header-text');
-    expect(headerText).toEqual('Dashboard');
+    const headerText = getByTestId('header-text');
+    expect(headerText.props.children).toEqual('Dashboard');
+
+    const welcomeText = getByTestId('welcome-text');
+    expect(welcomeText.props.children).toEqual('Welcome');
   });
 });

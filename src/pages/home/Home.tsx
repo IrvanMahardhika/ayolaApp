@@ -43,7 +43,9 @@ const Home: React.FC<HomePageProps> = ({navigation}) => {
       <Header title="Dashboard" />
       <View style={styles.body}>
         <View style={styles.welcomeTextContainer}>
-          <Text style={styles.welcomeText}>Welcome</Text>
+          <Text testID="welcome-text" style={styles.welcomeText}>
+            Welcome
+          </Text>
         </View>
         <View style={styles.buttonContainer}>
           <Button text="Logout" onPress={handleLogout} />

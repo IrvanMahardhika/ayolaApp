@@ -249,8 +249,12 @@ const Register: React.FC<RegisterPageProps> = ({navigation}) => {
             />
           </View>
           <View style={styles.goToLoginButtonContainer}>
-            <Text>Already have account ?</Text>
-            <TouchableOpacity onPress={goToLoginPage}>
+            <Text testID="already-have-account-text">
+              Already have account ?
+            </Text>
+            <TouchableOpacity
+              testID="go-to-login-button"
+              onPress={goToLoginPage}>
               <Text style={styles.goToLoginButtonText}>Sign In</Text>
             </TouchableOpacity>
           </View>

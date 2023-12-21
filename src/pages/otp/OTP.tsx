@@ -129,6 +129,7 @@ const OTP = ({navigation, route}: OTPPageProps) => {
         Enter Authentication Code
       </Text>
       <Text
+        testID="info-text"
         style={
           styles.infoText
         }>{`Enter the 6 digit that we have sent via the phone number to ${phoneNumber}`}</Text>

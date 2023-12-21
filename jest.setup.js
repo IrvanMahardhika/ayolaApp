@@ -20,10 +20,3 @@ jest.mock('@react-navigation/native-stack', () => ({
 }));
 
 jest.mock('react-native-splash-screen', () => {});
-
-jest.mock('react-native', () => ({
-  BackHandler: {
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-  },
-}));

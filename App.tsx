@@ -5,9 +5,10 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import SplashScreen from 'react-native-splash-screen';
 
 import Register from '@src/pages/register/Register';
 import OTP from '@src/pages/otp/OTP';
@@ -19,6 +20,10 @@ import {Routes, RootStackParamType} from '@constants/Routes';
 const Stack = createNativeStackNavigator<RootStackParamType>();
 
 function App(): React.JSX.Element {
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={Routes.LOGIN}>

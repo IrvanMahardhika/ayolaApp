@@ -63,11 +63,15 @@ const Login: React.FC<LoginPageProps> = ({navigation}) => {
   }, [authState.isAuth, navigation]);
 
   const handleSubmit = async () => {
+    let userList: Array<User> = [];
+
     const existingUserList = await getItemFromAsyncStorage(
       AsyncStorageKey.USER_LIST,
     );
 
-    const userList: Array<User> = JSON.parse(existingUserList);
+    if (existingUserList) {
+      userList = JSON.parse(existingUserList);
+    }
 
     const isUserExists = userList.find(
       u => u.email === email && u.password === password,
@@ -89,7 +93,7 @@ const Login: React.FC<LoginPageProps> = ({navigation}) => {
         },
       ]);
     } else {
-      Alert.alert('Error', 'Login failed');
+      Alert.alert('Login Failed', 'User not found');
     }
   };
 

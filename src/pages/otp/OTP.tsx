@@ -121,7 +121,9 @@ const OTP = ({navigation, route}: OTPPageProps) => {
 
   return (
     <View style={styles.root}>
-      <Text style={styles.mainText}>Enter Authentication Code</Text>
+      <Text testID="main-text" style={styles.mainText}>
+        Enter Authentication Code
+      </Text>
       <Text
         style={
           styles.infoText

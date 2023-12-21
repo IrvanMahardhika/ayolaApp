@@ -14,7 +14,9 @@ const Header: React.FC<HeaderProps> = ({title}) => {
 
   return (
     <View style={styles.header}>
-      <Text style={styles.headerText}>{title}</Text>
+      <Text testID="header-text" style={styles.headerText}>
+        {title}
+      </Text>
     </View>
   );
 };

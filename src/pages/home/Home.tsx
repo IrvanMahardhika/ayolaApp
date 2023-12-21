@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text} from 'react-native';
 
 import useThemedStyles from '@src/hooks/useThemedStyles';
@@ -6,12 +6,37 @@ import useThemedStyles from '@src/hooks/useThemedStyles';
 import Header from '@components/header/Header';
 import Button from '@components/button/Button';
 
+import {AsyncStorageKey} from '@constants/asyncStorageKeys';
+import {useAuthContext} from '@src/contexts/authContext';
+
+import {Routes} from '@constants/Routes';
+
+import {removeItemInAsyncStorage} from '@utils/asyncStorage';
+
 import HomeStyles from './Home.styles';
 
-const Home: React.FC = () => {
-  const styles = useThemedStyles(HomeStyles);
+type HomePageNavigationProps = {
+  navigate: any;
+};
 
-  const handleLogout = () => {};
+type HomePageProps = {
+  navigation: HomePageNavigationProps;
+};
+
+const Home: React.FC<HomePageProps> = ({navigation}) => {
+  const styles = useThemedStyles(HomeStyles);
+  const {authState, updateAuthState} = useAuthContext();
+
+  useEffect(() => {
+    if (!authState.isAuth) {
+      navigation.navigate(Routes.LOGIN);
+    }
+  }, [authState.isAuth, navigation]);
+
+  const handleLogout = () => {
+    updateAuthState({isAuth: false});
+    removeItemInAsyncStorage(AsyncStorageKey.AUTH_STATE);
+  };
 
   return (
     <View style={styles.root}>

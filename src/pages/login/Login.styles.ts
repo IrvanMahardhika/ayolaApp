@@ -31,4 +31,9 @@ export default (theme: Theme) =>
       fontWeight: 'bold',
       color: theme.colors.blue,
     },
+    showPasswordButton: {
+      position: 'absolute',
+      right: 10,
+      top: 15,
+    },
   });

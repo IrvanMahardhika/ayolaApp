@@ -8,11 +8,14 @@ import App from './App';
 import {name as appName} from './app.json';
 
 import ThemeProvider from '@styles/themeProvider';
+import AuthProvider from '@src/contexts/authContext';
 
 const mainApp = () => {
   return (
     <ThemeProvider>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </ThemeProvider>
   );
 };

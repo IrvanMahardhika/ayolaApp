@@ -7,3 +7,7 @@ export interface PasswordValidation {
   status: string;
   error: boolean;
 }
+
+export interface Auth {
+  isAuth: boolean;
+}

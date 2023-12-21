@@ -21,7 +21,7 @@ const Stack = createNativeStackNavigator<RootStackParamType>();
 function App(): React.JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={Routes.REGISTER}>
+      <Stack.Navigator initialRouteName={Routes.LOGIN}>
         <Stack.Screen
           name={Routes.REGISTER}
           component={Register}

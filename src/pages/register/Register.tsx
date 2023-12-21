@@ -14,11 +14,17 @@ import useThemedStyles from '@src/hooks/useThemedStyles';
 import Header from '@components/header/Header';
 import Button from '@components/button/Button';
 
+import {AsyncStorageKey} from '@constants/asyncStorageKeys';
 import {Routes} from '@constants/Routes';
 
 import {EmailValidation, PasswordValidation} from '@src/types/auth';
+import {User} from '@src/types/user';
 
 import {validateEmail, validatePassword} from '@utils/general';
+import {
+  getItemFromAsyncStorage,
+  setItemInAsyncStorage,
+} from '@utils/asyncStorage';
 
 import RegisterStyles from './Register.styles';
 
@@ -40,15 +46,7 @@ enum ActionType {
   SET_RESET = 'SET_RESET',
 }
 
-type AuthState = {
-  phoneNumber: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-};
-
-const INITIAL_STATE: AuthState = {
+const INITIAL_STATE: User = {
   phoneNumber: '',
   firstName: '',
   lastName: '',
@@ -56,7 +54,7 @@ const INITIAL_STATE: AuthState = {
   password: '',
 };
 
-const REDUCER = (state: AuthState, action: {type: string; payload: string}) => {
+const REDUCER = (state: User, action: {type: string; payload: string}) => {
   switch (action.type) {
     case ActionType.SET_PHONENUMBER:
       return {...state, phoneNumber: action.payload};
@@ -107,8 +105,24 @@ const Register: React.FC<RegisterPageProps> = ({navigation}) => {
     return unsubscribe;
   }, [navigation]);
 
-  const handleSubmit = () => {
-    console.log('state -- ', state);
+  const handleSubmit = async () => {
+    let userList = [];
+
+    const existingUserList = await getItemFromAsyncStorage(
+      AsyncStorageKey.USER_LIST,
+    );
+
+    if (existingUserList) {
+      userList = JSON.parse(existingUserList);
+    }
+
+    const newUserList = [...userList, state];
+
+    await setItemInAsyncStorage({
+      key: AsyncStorageKey.USER_LIST,
+      value: JSON.stringify(newUserList),
+    });
+
     navigation.navigate(Routes.OTP, {phoneNumber: state.phoneNumber});
   };
 

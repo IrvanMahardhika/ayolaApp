@@ -1,17 +1,28 @@
-import React, {useState} from 'react';
-import {View, Text, TextInput, TouchableOpacity} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {Alert, View, Text, TextInput, TouchableOpacity} from 'react-native';
 
 import useThemedStyles from '@src/hooks/useThemedStyles';
 
 import Header from '@components/header/Header';
 import Button from '@components/button/Button';
 
+import {AsyncStorageKey} from '@constants/asyncStorageKeys';
 import {Routes} from '@constants/Routes';
+
+import {useAuthContext} from '@src/contexts/authContext';
+
+import {User} from '@src/types/user';
+
+import {
+  setItemInAsyncStorage,
+  getItemFromAsyncStorage,
+} from '@utils/asyncStorage';
 
 import LoginStyles from './Login.styles';
 
 type LoginPageNavigationProps = {
   navigate: any;
+  addListener: any;
 };
 
 type LoginPageProps = {
@@ -20,17 +31,66 @@ type LoginPageProps = {
 
 const Login: React.FC<LoginPageProps> = ({navigation}) => {
   const styles = useThemedStyles(LoginStyles);
+  const {authState, updateAuthState} = useAuthContext();
 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const isSubmitButtonDisabled = !email || !password;
 
-  const handleSubmit = () => {
-    console.log('email -- ', email);
-    console.log('password -- ', password);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      const existingAuthState = await getItemFromAsyncStorage(
+        AsyncStorageKey.AUTH_STATE,
+      );
 
-    navigation.navigate(Routes.HOME);
+      if (existingAuthState) {
+        const parsedExistingAuthState = JSON.parse(existingAuthState);
+        if (parsedExistingAuthState) {
+          updateAuthState(parsedExistingAuthState);
+        }
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, updateAuthState]);
+
+  useEffect(() => {
+    if (authState.isAuth) {
+      navigation.navigate(Routes.HOME);
+    }
+  }, [authState.isAuth, navigation]);
+
+  const handleSubmit = async () => {
+    const existingUserList = await getItemFromAsyncStorage(
+      AsyncStorageKey.USER_LIST,
+    );
+
+    const userList: Array<User> = JSON.parse(existingUserList);
+
+    const isUserExists = userList.find(
+      u => u.email === email && u.password === password,
+    );
+
+    if (isUserExists) {
+      Alert.alert('Success', 'Login success', [
+        {
+          text: 'OK',
+          onPress: async () => {
+            setEmail('');
+            setPassword('');
+            updateAuthState({isAuth: true});
+            await setItemInAsyncStorage({
+              key: AsyncStorageKey.AUTH_STATE,
+              value: JSON.stringify({isAuth: true}),
+            });
+          },
+        },
+      ]);
+    } else {
+      Alert.alert('Error', 'Login failed');
+    }
   };
 
   const goToRegisterPage = () => navigation.navigate(Routes.REGISTER);
@@ -46,14 +106,21 @@ const Login: React.FC<LoginPageProps> = ({navigation}) => {
           value={email}
           onChangeText={(text: string) => setEmail(text)}
         />
-        <TextInput
-          placeholder="Password"
-          inputMode="text"
-          secureTextEntry
-          style={styles.textInput}
-          value={password}
-          onChangeText={(text: string) => setPassword(text)}
-        />
+        <View>
+          <TextInput
+            placeholder="Password"
+            inputMode="text"
+            secureTextEntry={!showPassword}
+            style={styles.textInput}
+            value={password}
+            onChangeText={(text: string) => setPassword(text)}
+          />
+          <TouchableOpacity
+            style={styles.showPasswordButton}
+            onPress={() => setShowPassword(!showPassword)}>
+            <Text>show</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.buttonContainer}>
           <Button
             text="Submit"
